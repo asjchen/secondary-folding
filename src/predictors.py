@@ -12,15 +12,6 @@ from global_vars import *
 
 import keras.callbacks as cbks
 
-class CustomMetrics(cbks.Callback):
-
-    def on_epoch_end(self, epoch, logs=None):
-        for k in logs:
-            if k.endswith('truncated_accuracy'):
-                f = open('y_true.txt', 'w')
-                f.write(str(logs[k]))
-                f.close()
-
 # TODO: write a F1 score function on a batch
 def f1_score(y_true, y_predict):
     #return y_true
@@ -28,7 +19,9 @@ def f1_score(y_true, y_predict):
 
 def truncated_accuracy(y_true, y_predict):
     mask = backend.sum(y_true, axis=2)
-    is_same = backend.cast(backend.all(backend.equal(y_true, y_predict), axis=2), 'float32')
+    y_pred_labels = backend.cast(backend.argmax(y_predict, axis=2), 'float32')
+    y_true_labels = backend.cast(backend.argmax(y_true, axis=2), 'float32')
+    is_same = backend.cast(backend.equal(y_true_labels, y_pred_labels), 'float32')
     num_same = backend.sum(is_same * mask, axis=1)
     lengths = backend.sum(mask, axis=1)
     return backend.mean(num_same / lengths, axis=0)
@@ -74,8 +67,7 @@ class EncoderDecoder(object):
         self.model.compile(optimizer='adagrad',
             loss='categorical_crossentropy',
             sample_weight_mode='temporal',
-            #metrics=[truncated_accuracy])
-            metrics=[categorical_accuracy])
+            metrics=[truncated_accuracy])
         self.model.summary()
 
     def add_encoder(self, max_seq_length):
@@ -93,7 +85,7 @@ class EncoderDecoder(object):
           epochs=num_epochs,
           validation_split=0.25,
           shuffle=True,
-          sample_weight=weight_mask, callbacks=[CustomMetrics()])
+          sample_weight=weight_mask)
 
     def predict(self, x_test, test_lengths, batch_size=10):
         vectorized_predictions = self.model.predict(x_test,
