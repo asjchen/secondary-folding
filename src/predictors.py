@@ -10,12 +10,11 @@ import numpy as np
 
 from global_vars import *
 
-import keras.callbacks as cbks
+from keras.callbacks import Callback
 
-# TODO: write a F1 score function on a batch
-def f1_score(y_true, y_predict):
-    #return y_true
-    return truncated_accuracy(y_true, y_predict)
+#class F1Score(Callback):
+
+
 
 def truncated_accuracy(y_true, y_predict):
     mask = backend.sum(y_true, axis=2)
@@ -25,37 +24,6 @@ def truncated_accuracy(y_true, y_predict):
     num_same = backend.sum(is_same * mask, axis=1)
     lengths = backend.sum(mask, axis=1)
     return backend.mean(num_same / lengths, axis=0)
-
-
-# class EncoderDecoder(object):
-#     def __init__(self):
-#         encoder_inputs = Input(shape=(None, INPUT_DIM))
-#         # TODO: change activation function
-#         encoder = LSTM(HIDDEN_DIM, return_state=True)
-#         _, state_h, state_c = encoder(encoder_inputs)
-
-#         decoder_inputs = Input(shape=(None, OUTPUT_DIM))
-#         decoder = LSTM(HIDDEN_DIM, return_sequences=True)
-#         decoder_outputs = decoder(decoder_inputs, initial_state=[state_h, state_c])
-#         decoder_softmax = Dense(OUTPUT_DIM, activation='softmax')
-#         decoder_outputs = decoder_softmax(decoder_outputs)
-
-#         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-
-#         self.model.compile(optimizer='adagrad',
-#             loss='categorical_crossentropy',
-#             # metrics=[f1_score])
-#             metrics=[f1_score])
-#         self.model.summary()
-
-#     def train(self, encoder_input_train, decoder_input_train, decoder_output_train,
-#         num_epochs=5, batch_size=10):
-#         self.model.fit([encoder_input_train, decoder_input_train], decoder_output_train,
-#             batch_size=batch_size,
-#             epochs=num_epochs,
-#             validation_split=0.25)
-#         self.model.save('model.h5')
-
 
 
 class EncoderDecoder(object):
@@ -76,7 +44,7 @@ class EncoderDecoder(object):
     def add_decoder(self, max_seq_length, activation='tanh'):
         pass
 
-    def train(self, x_train, y_train, train_lengths, num_epochs=5, batch_size=10):
+    def train(self, x_train, y_train, train_lengths, num_epochs=5, batch_size=50):
         weight_mask = np.zeros((x_train.shape[0], self.max_seq_length))
         for i in range(len(train_lengths)):
             weight_mask[i, : train_lengths[i]] = 1.0
@@ -87,7 +55,15 @@ class EncoderDecoder(object):
           shuffle=True,
           sample_weight=weight_mask)
 
-    def predict(self, x_test, test_lengths, batch_size=10):
+    def evaluate(self, x_test, y_test, test_lengths, batch_size=50):
+        weight_mask = np.zeros((x_test.shape[0], self.max_seq_length))
+        for i in range(len(test_lengths)):
+            weight_mask[i, : test_lengths[i]] = 1.0
+        return self.model.evaluate(x=x_test, y=y_test,
+          batch_size=batch_size,
+          sample_weight=weight_mask)
+
+    def predict(self, x_test, test_lengths, batch_size=50):
         vectorized_predictions = self.model.predict(x_test,
             batch_size=batch_size,
             verbose=1)

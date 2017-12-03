@@ -47,13 +47,20 @@ def sequence_to_vectors(sequence, max_seq_length):
         if end_idx < len(sequence):
             amino_idx = AMINO_ACIDS.index(sequence[end_idx])
             seq_vectors[i, new_step_boundary + amino_idx] += 1
-    # print seq_vectors
     return seq_vectors
 
 def labels_to_vector(labels, max_seq_length):
-    # print labels
     label_vector = np.zeros((max_seq_length, len(LABEL_SET)))
     for i in range(len(labels)):
         label_vector[i, LABEL_SET.index(labels[i])] += 1
-    #print label_vector
     return label_vector
+
+def dataframe_to_np_data(dataframe, max_seq_length):
+    x = np.zeros((len(dataframe), max_seq_length, INPUT_DIM))
+    for i in range(len(dataframe)):
+        x[i] = sequence_to_vectors(dataframe.iloc[i]['Sequence'], max_seq_length)
+    y = np.zeros((len(dataframe), max_seq_length, OUTPUT_DIM))
+    for i in range(len(dataframe)):
+        y[i] = labels_to_vector(dataframe.iloc[i]['Labels'], max_seq_length)
+    return x, y
+
