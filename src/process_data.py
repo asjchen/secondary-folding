@@ -38,12 +38,22 @@ def sequence_to_vectors(sequence, max_seq_length):
     for i in range(len(sequence)):
         if i > 0:
             seq_vectors[i, : new_step_boundary] = seq_vectors[i - 1, NUM_AMINO_ACIDS: ]
-            amino_idx = AMINO_ACIDS.index(sequence[i])
+        else:
+            for j in range((WINDOW_SIZE - 1) / 2):
+                amino_idx = AMINO_ACIDS.index(sequence[j])
+                start_idx = ((WINDOW_SIZE - 1) / 2 + j) * NUM_AMINO_ACIDS
+                seq_vectors[i, start_idx + amino_idx] += 1
+        end_idx = i + (WINDOW_SIZE - 1) / 2
+        if end_idx < len(sequence):
+            amino_idx = AMINO_ACIDS.index(sequence[end_idx])
             seq_vectors[i, new_step_boundary + amino_idx] += 1
+    # print seq_vectors
     return seq_vectors
 
 def labels_to_vector(labels, max_seq_length):
+    # print labels
     label_vector = np.zeros((max_seq_length, len(LABEL_SET)))
     for i in range(len(labels)):
         label_vector[i, LABEL_SET.index(labels[i])] += 1
+    #print label_vector
     return label_vector
