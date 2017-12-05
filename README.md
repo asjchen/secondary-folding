@@ -1,10 +1,10 @@
 # Protein Secondary Structure Prediction with Neural Networks
 
 This is a brief survey of neural network methods to predict secondary 
-structure in proteins. The dataset, originally from the UniProtKB database, 
-contains amino acid sequence and structure information for proteins found in 
-homo sapiens.
+structure in proteins. The dataset, originally from the PDB database, 
+contains amino acid sequence and structure information for roughly 6100 proteins.
 
+Currently, we use a Bidirection LSTM Encoder-Decoder.
 
 ## Python Requirements
 
@@ -20,6 +20,6 @@ TODO: update requirements.txt with version numbers
 
 To run the current version of the algorithm, you can run the following command:
 ```
-python src/driver.py data/uniprot-all.tab
+python src/driver.py data/cullpdb+profile_6133.npy
 ```
 

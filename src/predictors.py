@@ -1,7 +1,7 @@
 # Neural Network Setup
 
 from keras.models import Sequential, Model
-from keras.layers import Bidirectional, Dense, Activation, Masking
+from keras.layers import Bidirectional, Dense, Activation, Masking, Conv1D
 from keras.layers import LSTM, TimeDistributed, RepeatVector, Input
 from keras.metrics import categorical_accuracy
 from keras.optimizers import SGD
@@ -55,7 +55,7 @@ class EncoderDecoder(object):
     def add_decoder(self, max_seq_length):
         pass
 
-    def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val, num_epochs=100, batch_size=50):
+    def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val, num_epochs=20, batch_size=50):
         weight_mask_train = np.zeros((x_train.shape[0], self.max_seq_length))
         for i in range(len(lengths_train)):
             weight_mask_train[i, : lengths_train[i]] = 1.0
