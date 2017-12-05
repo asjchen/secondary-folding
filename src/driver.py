@@ -31,13 +31,13 @@ def main():
     y_val = outputs[VALIDATION_RANGE[0]: VALIDATION_RANGE[1], :, :]
     lengths_val = lengths[VALIDATION_RANGE[0]: VALIDATION_RANGE[1]]
 
-    x_train = x_train[:100, :, :]
-    y_train = y_train[:100, :, :]
-    lengths_train = lengths_train[:100]
+    #x_train = x_train[:1000, :, :]
+    #y_train = y_train[:1000, :, :]
+    #lengths_train = lengths_train[:1000]
 
-    x_val = x_val[:50, :, :]
-    y_val = y_val[:50, :, :]
-    lengths_val = lengths_val[:50]
+    #x_val = x_val[:100, :, :]
+    #y_val = y_val[:100, :, :]
+    #lengths_val = lengths_val[:100]
 
     model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT)
     # x_train, y_train = process_data.dataframe_to_np_data(train_data, SEQUENCE_LIMIT)

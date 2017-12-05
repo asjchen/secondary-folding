@@ -2,17 +2,10 @@
 
 import math
 
-# STRAND = 'S'
-# HELIX = 'H'
-# TURN = 'T'
-# UNCLASSIFIED = 'U'
-# LABEL_SET = [STRAND, HELIX, TURN, UNCLASSIFIED]
-
 LABEL_SET = ['L', 'B', 'E', 'G', 'I', 'H', 'S', 'T']
 AMINO_ACIDS = ['A', 'C', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'M', 'L', 'N', 'Q', 'P', 'S', 'R', 'T', 'W', 'V', 'Y', 'X']
-# NUM_MISC_INPUTS 
 
-WINDOW_SIZE = 9
+WINDOW_SIZE = 5
 NUM_AMINO_ACIDS = len(AMINO_ACIDS)
 NUM_LABELS = len(LABEL_SET)
 

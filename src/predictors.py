@@ -37,7 +37,7 @@ def truncated_accuracy(y_true, y_predict):
 
 
 class EncoderDecoder(object):
-    def __init__(self, max_seq_length, batch_size=10):
+    def __init__(self, max_seq_length, batch_size=300):
         self.model = Sequential()
         self.max_seq_length = max_seq_length
         self.batch_size = batch_size
@@ -55,7 +55,7 @@ class EncoderDecoder(object):
     def add_decoder(self, max_seq_length):
         pass
 
-    def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val, num_epochs=20, batch_size=50):
+    def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val, num_epochs=100, batch_size=50):
         weight_mask_train = np.zeros((x_train.shape[0], self.max_seq_length))
         for i in range(len(lengths_train)):
             weight_mask_train[i, : lengths_train[i]] = 1.0
