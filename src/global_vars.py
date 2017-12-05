@@ -2,20 +2,28 @@
 
 import math
 
-STRAND = 'S'
-HELIX = 'H'
-TURN = 'T'
-UNCLASSIFIED = 'U'
-LABEL_SET = [STRAND, HELIX, TURN, UNCLASSIFIED]
+# STRAND = 'S'
+# HELIX = 'H'
+# TURN = 'T'
+# UNCLASSIFIED = 'U'
+# LABEL_SET = [STRAND, HELIX, TURN, UNCLASSIFIED]
 
-AMINO_ACIDS = ['A', 'R', 'N', 'D', 'B', 'C', 'E', 'Q', 'Z', 'G', 'H', 'I', 'L', 'K', 
-    'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'U']
+LABEL_SET = ['L', 'B', 'E', 'G', 'I', 'H', 'S', 'T']
+AMINO_ACIDS = ['A', 'C', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'M', 'L', 'N', 'Q', 'P', 'S', 'R', 'T', 'W', 'V', 'Y', 'X']
+# NUM_MISC_INPUTS 
 
-WINDOW_SIZE = 17
+WINDOW_SIZE = 9
 NUM_AMINO_ACIDS = len(AMINO_ACIDS)
+NUM_LABELS = len(LABEL_SET)
 
 INPUT_DIM = WINDOW_SIZE * NUM_AMINO_ACIDS
 HIDDEN_DIM = int(math.sqrt(len(LABEL_SET) * INPUT_DIM))
 OUTPUT_DIM = len(LABEL_SET)
 
-SEQUENCE_LIMIT = 2000
+SEQUENCE_LIMIT = 700
+NUM_ORIG_FEATURES = 57
+
+TRAINING_RANGE = (0, 5600)
+TEST_RANGE = (5605, 5877)
+VALIDATION_RANGE = (5877, 6133)
+
