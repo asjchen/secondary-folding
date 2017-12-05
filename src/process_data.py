@@ -13,21 +13,26 @@ def npy_to_input_data(filename):
     raw_data = raw_data.reshape((raw_data.shape[0], SEQUENCE_LIMIT, NUM_ORIG_FEATURES))
     
     # If we create a mask and ignore the noseq characters
-    raw_input_vectors = raw_data[:, :, : NUM_AMINO_ACIDS]
+    # raw_input_vectors = raw_data[:, :, : NUM_AMINO_ACIDS]
+    raw_input_vectors = np.concatenate((raw_data[:, :, : NUM_AMINO_ACIDS], 
+        raw_data[:, :, NUM_ORIG_FEATURES - 1 - NUM_AMINO_ACIDS: NUM_ORIG_FEATURES - 1]), axis=2)
+
+
+
     lengths = np.sum(np.sum(raw_input_vectors, axis=2), axis=1).astype(int)
     input_vectors = np.zeros((raw_input_vectors.shape[0], SEQUENCE_LIMIT, INPUT_DIM))
     for i in range(input_vectors.shape[0]):
         for j in range(lengths[i]):
             if j == 0:
-                init_idx = ((WINDOW_SIZE - 1) / 2) * NUM_AMINO_ACIDS
+                init_idx = ((WINDOW_SIZE - 1) / 2) * INDIV_INPUT_DIM
                 for k in range((WINDOW_SIZE - 1) / 2):
-                    start_idx = init_idx + k * NUM_AMINO_ACIDS
-                    input_vectors[i, 0, start_idx: start_idx + NUM_AMINO_ACIDS] = raw_input_vectors[i, k, :]
+                    start_idx = init_idx + k * INDIV_INPUT_DIM
+                    input_vectors[i, 0, start_idx: start_idx + INDIV_INPUT_DIM] = raw_input_vectors[i, k, :]
             else:
-                input_vectors[i, j, : INPUT_DIM - NUM_AMINO_ACIDS] = input_vectors[i, j - 1, NUM_AMINO_ACIDS: ]
+                input_vectors[i, j, : INPUT_DIM - INDIV_INPUT_DIM] = input_vectors[i, j - 1, INDIV_INPUT_DIM: ]
             next_idx = j + ((WINDOW_SIZE - 1) / 2)        
             if next_idx < lengths[i]:
-                input_vectors[i, j, INPUT_DIM - NUM_AMINO_ACIDS: ] = raw_input_vectors[i, next_idx, :]
+                input_vectors[i, j, INPUT_DIM - INDIV_INPUT_DIM: ] = raw_input_vectors[i, next_idx, :]
     # Plus one because there is a NoSeq character in addition to the amino acids
     output_vectors = raw_data[:, :, NUM_AMINO_ACIDS + 1: NUM_AMINO_ACIDS + 1 + NUM_LABELS]
     return input_vectors, output_vectors, lengths
