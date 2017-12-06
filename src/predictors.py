@@ -97,11 +97,12 @@ class BidirectionalLSTMPredictor(EncoderDecoder):
     # TODO: potentially use dropout
     def add_encoder(self, activation='tanh'):
         self.model.add(Masking(mask_value=0, input_shape=(self.max_seq_length, INPUT_DIM)))
-        self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation), merge_mode='concat'))
+        #self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation), merge_mode='concat'))
+        self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
 
     def add_decoder(self, activation='tanh'):
-        self.model.add(RepeatVector(self.max_seq_length))
-        self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
-        self.model.add(TimeDistributed(Dense(len(LABEL_SET))))
-        self.model.add(Activation('softmax'))
+        #self.model.add(RepeatVector(self.max_seq_length))
+        #self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
+        self.model.add(TimeDistributed(Dense(HIDDEN_DIM)))
+        self.model.add(TimeDistributed(Dense(OUTPUT_DIM, activation='softmax')))
 

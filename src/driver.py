@@ -46,8 +46,8 @@ def main():
     model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT)
     model.train(x_train, y_train, lengths_train, x_val, y_val, lengths_val)
 
-    # # print 'Test Loss: {}'.format(model.evaluate_loss(x_test, y_test, test_lengths))
-    # predictions = model.predict(x_test, test_lengths)
+    print 'Test Accuracy: {}'.format(model.evaluate_loss(x_test, y_test, lengths_test)[1])
+    predictions = model.predict(x_test, lengths_test)
     
 
 if __name__ == '__main__':
