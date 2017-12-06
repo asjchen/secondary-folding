@@ -2,7 +2,7 @@
 
 from keras.models import Sequential
 from keras.layers import Bidirectional, Dense, Activation, Masking, Conv1D
-from keras.layers import LSTM, TimeDistributed, RepeatVector, Input
+from keras.layers import Dropout, LSTM, TimeDistributed, RepeatVector, Input
 from keras.metrics import categorical_accuracy
 import keras.backend as backend
 from keras.callbacks import Callback
@@ -41,18 +41,14 @@ class EncoderDecoder(object):
         self.model = Sequential()
         self.max_seq_length = max_seq_length
         self.batch_size = batch_size
-        self.add_encoder()
-        self.add_decoder()
+        self.add_layers()
         self.model.compile(optimizer='adagrad',
             loss='categorical_crossentropy',
             sample_weight_mode='temporal',
             metrics=[truncated_accuracy])
         self.model.summary()
 
-    def add_encoder(self, max_seq_length):
-        pass
-
-    def add_decoder(self, max_seq_length):
+    def add_layers(self):
         pass
 
     def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val, num_epochs=20, batch_size=50):
@@ -95,14 +91,9 @@ class EncoderDecoder(object):
 
 class BidirectionalLSTMPredictor(EncoderDecoder):
     # TODO: potentially use dropout
-    def add_encoder(self, activation='tanh'):
+    def add_layers(self, activation='tanh'):
         self.model.add(Masking(mask_value=0, input_shape=(self.max_seq_length, INPUT_DIM)))
-        #self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation), merge_mode='concat'))
         self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
-
-    def add_decoder(self, activation='tanh'):
-        #self.model.add(RepeatVector(self.max_seq_length))
-        #self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
         self.model.add(TimeDistributed(Dense(HIDDEN_DIM)))
         self.model.add(TimeDistributed(Dense(OUTPUT_DIM, activation='softmax')))
 
