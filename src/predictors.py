@@ -2,7 +2,7 @@
 
 from keras.models import Sequential
 from keras.layers import Bidirectional, Dense, Activation, Masking, Conv1D
-from keras.layers import LSTM, TimeDistributed, RepeatVector, Input
+from keras.layers import Dropout, LSTM, TimeDistributed, RepeatVector, Input
 from keras.metrics import categorical_accuracy
 import keras.backend as backend
 from keras.callbacks import Callback
@@ -97,10 +97,12 @@ class BidirectionalLSTMPredictor(EncoderDecoder):
     # TODO: potentially use dropout
     def add_encoder(self, activation='tanh'):
         self.model.add(Masking(mask_value=0, input_shape=(self.max_seq_length, INPUT_DIM)))
+        self.model.add(Dropout(0.5))
         self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation), merge_mode='concat'))
 
     def add_decoder(self, activation='tanh'):
         self.model.add(RepeatVector(self.max_seq_length))
+        self.model.add(Dropout(0.5))
         self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, return_sequences=True), merge_mode='concat'))
         self.model.add(TimeDistributed(Dense(len(LABEL_SET))))
         self.model.add(Activation('softmax'))
