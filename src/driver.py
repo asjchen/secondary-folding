@@ -26,10 +26,14 @@ def main():
     y_train = outputs[TRAINING_RANGE[0]: TRAINING_RANGE[1], :, :]
     lengths_train = lengths[TRAINING_RANGE[0]: TRAINING_RANGE[1]]
 
-
     x_val = inputs[VALIDATION_RANGE[0]: VALIDATION_RANGE[1], :, :]
     y_val = outputs[VALIDATION_RANGE[0]: VALIDATION_RANGE[1], :, :]
     lengths_val = lengths[VALIDATION_RANGE[0]: VALIDATION_RANGE[1]]
+
+
+    x_test = inputs[TEST_RANGE[0]: TEST_RANGE[1], :, :]
+    y_test = outputs[TEST_RANGE[0]: TEST_RANGE[1], :, :]
+    lengths_test = lengths[TEST_RANGE[0]: TEST_RANGE[1]]
 
     #x_train = x_train[:100, :, :]
     #y_train = y_train[:100, :, :]
@@ -40,62 +44,10 @@ def main():
     #lengths_val = lengths_val[:20]
 
     model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT)
-    # x_train, y_train = process_data.dataframe_to_np_data(train_data, SEQUENCE_LIMIT)
     model.train(x_train, y_train, lengths_train, x_val, y_val, lengths_val)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # train_data['Proportion Unclassified'] = train_data.apply(proportion_unclassified, axis=1)
-    # train_data = train_data[train_data['Proportion Unclassified'] < 0.5]
-    
-
-    # # freq = {}
-    # # for i in range(len(train_data)):
-    # #     for j in range(len(train_data.iloc[i]['Sequence']) - WINDOW_SIZE + 1):
-    # #         sub = train_data.iloc[i]['Sequence'][j: j + WINDOW_SIZE]
-    # #         if sub not in freq:
-    # #             freq[sub] = { l: 0 for l in LABEL_SET }
-    # #         freq[sub][train_data.iloc[i]['Labels'][j + (WINDOW_SIZE - 1) / 2]] += 1
-    # # for sub in freq:
-    # #     print '{} {}'.format(sub, freq[sub])
-
-
-
-    # max_seq_length = max(train_data['Sequence'].str.len().max(), test_data['Sequence'].str.len().max())
-    
-    # model = BidirectionalLSTMPredictor(max_seq_length)
-    # x_train, y_train = process_data.dataframe_to_np_data(train_data, max_seq_length)
-    # train_lengths = train_data['Sequence'].str.len().values
-    # model.train(x_train, y_train, train_lengths)
-
-    # x_test, y_test = process_data.dataframe_to_np_data(test_data, max_seq_length)
-    # test_lengths = test_data['Sequence'].str.len().values
     # # print 'Test Loss: {}'.format(model.evaluate_loss(x_test, y_test, test_lengths))
     # predictions = model.predict(x_test, test_lengths)
-
-
-    #print predictions
     
 
 if __name__ == '__main__':

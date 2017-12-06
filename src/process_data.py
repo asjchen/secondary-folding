@@ -13,10 +13,7 @@ def npy_to_input_data(filename):
     raw_data = raw_data.reshape((raw_data.shape[0], SEQUENCE_LIMIT, NUM_ORIG_FEATURES))
     
     # If we create a mask and ignore the noseq characters
-    # raw_input_vectors = raw_data[:, :, : NUM_AMINO_ACIDS]
-    raw_input_vectors = np.concatenate((raw_data[:, :, : NUM_AMINO_ACIDS], 
-        raw_data[:, :, NUM_ORIG_FEATURES - 1 - NUM_AMINO_ACIDS: NUM_ORIG_FEATURES - 1]), axis=2)
-
+    raw_input_vectors = raw_data[:, :, : NUM_AMINO_ACIDS]
 
 
     lengths = np.sum(np.sum(raw_input_vectors, axis=2), axis=1).astype(int)
