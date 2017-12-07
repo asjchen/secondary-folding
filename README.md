@@ -1,9 +1,24 @@
-# Protein Secondary Structure Prediction with Neural Networks
+# Protein Secondary Structure Prediction with Deep Learning
 
-This is a brief survey of neural network methods to predict secondary 
-structure in proteins. The dataset, originally from the PDB database, 
-contains amino acid sequence and structure information for roughly 6100 
-proteins. Currently, we use a Bidirectional LSTM RNN architecture.
+This is a deep learning architecture to predict secondary structure in 
+proteins. The dataset, originally from the Protein Data Bank (PDB), contains 
+amino acid sequence and structure information for roughly 6100 proteins. 
+
+Currently, we use a Bidirectional LSTM RNN architecture to solve the Q8
+classification problem; for each amino acid in the protein sequences, we
+assign one of eight different labels:
+
+* alpha helix
+* beta strand
+* loop or irregular
+* beta turn
+* bend
+* 3<sub>10</sub>-helix
+* beta bridge
+* pi helix
+
+The neural network architecture yields a roughly 56% Q8 accuracy in testing.
+
 
 ## Python Requirements
 
