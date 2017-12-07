@@ -3,7 +3,8 @@
 import math
 
 LABEL_SET = ['L', 'B', 'E', 'G', 'I', 'H', 'S', 'T']
-AMINO_ACIDS = ['A', 'C', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'M', 'L', 'N', 'Q', 'P', 'S', 'R', 'T', 'W', 'V', 'Y', 'X']
+AMINO_ACIDS = ['A', 'C', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'M', 'L', 
+    'N', 'Q', 'P', 'S', 'R', 'T', 'W', 'V', 'Y', 'X']
 
 WINDOW_SIZE = 21
 NUM_AMINO_ACIDS = len(AMINO_ACIDS)
@@ -12,6 +13,7 @@ NUM_LABELS = len(LABEL_SET)
 SEQUENCE_LIMIT = 700
 NUM_ORIG_FEATURES = 57
 
+# Indices of the dataset samples
 TRAINING_RANGE = (0, 5600)
 TEST_RANGE = (5605, 5877)
 VALIDATION_RANGE = (5877, 6133)
