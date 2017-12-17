@@ -31,9 +31,7 @@ def main():
     y_test = outputs[TEST_RANGE[0]: TEST_RANGE[1], :, :]
     lengths_test = lengths[TEST_RANGE[0]: TEST_RANGE[1]]
 
-    # TODO: change so sequence_limit doesn't need to be passed anymore as param
-    model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT, \
-        print_confusion=args.print_confusion)
+    model = BidirectionalLSTMPredictor(print_confusion=args.print_confusion)
     model.train(x_train, y_train, lengths_train, x_val, y_val, lengths_val)
 
     print 'Test Accuracy: {}'.format(

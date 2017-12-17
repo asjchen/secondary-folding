@@ -47,9 +47,8 @@ def truncated_accuracy(y_true, y_predict):
 
 # Base object for predicting the Q8 labels of amino acid sequences
 class Predictor(object):
-    def __init__(self, max_seq_length, batch_size=300, print_confusion=False):
+    def __init__(self, batch_size=300, print_confusion=False):
         self.model = Sequential()
-        self.max_seq_length = max_seq_length
         self.batch_size = batch_size
         self.add_layers()
         self.model.compile(optimizer='adagrad',
@@ -67,14 +66,12 @@ class Predictor(object):
     # Trains the neural network model given training and validation data
     def train(self, x_train, y_train, lengths_train, x_val, y_val, lengths_val,
         num_epochs=20, batch_size=50):
-        weight_mask_train = np.zeros((x_train.shape[0], self.max_seq_length))
+        weight_mask_train = np.zeros((x_train.shape[0], SEQUENCE_LIMIT))
         for i in range(len(lengths_train)):
             weight_mask_train[i, : lengths_train[i]] = 1.0
-
-        weight_mask_val = np.zeros((x_val.shape[0], self.max_seq_length))
+        weight_mask_val = np.zeros((x_val.shape[0], SEQUENCE_LIMIT))
         for i in range(len(lengths_val)):
             weight_mask_val[i, : lengths_val[i]] = 1.0
-
         self.model.fit(x_train, y_train,
           batch_size=self.batch_size,
           epochs=num_epochs,
@@ -86,7 +83,7 @@ class Predictor(object):
     # Evaluates the test performance of the model, returning a list
     # [cross entropy loss, truncated_accuracy on test set]
     def evaluate_loss(self, x_test, y_test, test_lengths):
-        weight_mask = np.zeros((x_test.shape[0], self.max_seq_length))
+        weight_mask = np.zeros((x_test.shape[0], SEQUENCE_LIMIT))
         for i in range(len(test_lengths)):
             weight_mask[i, : test_lengths[i]] = 1.0
         return self.model.evaluate(x=x_test, y=y_test,
@@ -111,7 +108,7 @@ class Predictor(object):
 class BidirectionalLSTMPredictor(Predictor):
     def add_layers(self, activation='tanh'):
         self.model.add(Masking(mask_value=0, 
-            input_shape=(self.max_seq_length, INPUT_DIM)))
+            input_shape=(SEQUENCE_LIMIT, INPUT_DIM)))
         self.model.add(Bidirectional(LSTM(HIDDEN_DIM, activation=activation, 
             return_sequences=True), merge_mode='concat'))
         self.model.add(TimeDistributed(Dense(HIDDEN_DIM)))
