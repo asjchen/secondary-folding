@@ -12,6 +12,10 @@ def main():
         description=('Neural network architecture to predict '
             'secondary structure in proteins'))
     parser.add_argument('filename', help='Path to file of protein data')
+    parser.add_argument('--print_confusion', '-c', action='store_true',
+        help=('Optional flag to print the confusion matrix for the '
+            'validation data after each epoch and the test data at the '
+            'end of training'))
     args = parser.parse_args()
 
     inputs, outputs, lengths = process_data.npy_to_input_data(args.filename)
@@ -27,13 +31,14 @@ def main():
     y_test = outputs[TEST_RANGE[0]: TEST_RANGE[1], :, :]
     lengths_test = lengths[TEST_RANGE[0]: TEST_RANGE[1]]
 
-    model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT)
+    # TODO: change so sequence_limit doesn't need to be passed anymore as param
+    model = BidirectionalLSTMPredictor(SEQUENCE_LIMIT, \
+        print_confusion=args.print_confusion)
     model.train(x_train, y_train, lengths_train, x_val, y_val, lengths_val)
 
     print 'Test Accuracy: {}'.format(
         model.evaluate_loss(x_test, y_test, lengths_test)[1])
-    predictions = model.predict(x_test, lengths_test)
-    
+
 
 if __name__ == '__main__':
     main()

@@ -10,23 +10,28 @@ import numpy as np
 from global_vars import *
 
 # Keras Callback to produce a confusion matrix in addition to the accuracy
-# We print the confusion matrix after every epoch
+# We can print the confusion matrix after every epoch
 class ConfusionMatrix(Callback):
+    def __init__(self, print_confusion=False):
+        super(Callback, self).__init__()
+        self.print_confusion = print_confusion
+
     def on_epoch_end(self, epoch, logs={}):
-        mask = np.sum(self.validation_data[1], axis=2)
-        y_true_labels = mask * (np.argmax(self.validation_data[1], axis=2) + 1)
-        raw_predictions = self.model.predict(self.validation_data[0])
-        y_pred_labels = mask * (np.argmax(raw_predictions, axis=2) + 1)
-        confusion = np.zeros((OUTPUT_DIM, OUTPUT_DIM))
-        for i in range(y_true_labels.shape[0]):
-            for j in range(y_true_labels.shape[1]):
-                if int(y_true_labels[i, j]) == 0:
-                    break
-                true_idx = int(y_true_labels[i, j]) - 1
-                pred_idx = int(y_pred_labels[i, j]) - 1
-                confusion[true_idx][pred_idx] += 1
-        print ''
-        print confusion.astype(int)
+        if self.print_confusion:
+            mask = np.sum(self.validation_data[1], axis=2)
+            y_true_labels = mask * (np.argmax(self.validation_data[1], axis=2) + 1)
+            raw_predictions = self.model.predict(self.validation_data[0])
+            y_pred_labels = mask * (np.argmax(raw_predictions, axis=2) + 1)
+            confusion = np.zeros((OUTPUT_DIM, OUTPUT_DIM))
+            for i in range(y_true_labels.shape[0]):
+                for j in range(y_true_labels.shape[1]):
+                    if int(y_true_labels[i, j]) == 0:
+                        break
+                    true_idx = int(y_true_labels[i, j]) - 1
+                    pred_idx = int(y_pred_labels[i, j]) - 1
+                    confusion[true_idx][pred_idx] += 1
+            print '\nConfusion Matrix on Validation Data'
+            print confusion.astype(int)
 
 # This accuracy function takes into account the boolean mask and accounts
 # for the varying lengths of the protein sequences
@@ -42,7 +47,7 @@ def truncated_accuracy(y_true, y_predict):
 
 # Base object for predicting the Q8 labels of amino acid sequences
 class Predictor(object):
-    def __init__(self, max_seq_length, batch_size=300):
+    def __init__(self, max_seq_length, batch_size=300, print_confusion=False):
         self.model = Sequential()
         self.max_seq_length = max_seq_length
         self.batch_size = batch_size
@@ -52,6 +57,7 @@ class Predictor(object):
             sample_weight_mode='temporal',
             metrics=[truncated_accuracy])
         self.model.summary()
+        self.print_confusion = print_confusion
 
     # This function should be implemented in child classes, as it implements
     # the neural network architecture
@@ -75,7 +81,7 @@ class Predictor(object):
           validation_data=(x_val, y_val, weight_mask_val),
           shuffle=True,
           sample_weight=weight_mask_train,
-          callbacks=[ConfusionMatrix()])
+          callbacks=[ConfusionMatrix(print_confusion=self.print_confusion)])
 
     # Evaluates the test performance of the model, returning a list
     # [cross entropy loss, truncated_accuracy on test set]
