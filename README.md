@@ -18,6 +18,7 @@ assign one of eight different labels:
 * pi helix
 
 The neural network architecture yields a roughly 56% Q8 accuracy in testing.
+(Note: these scripts are not optimized for running on GPUs.)
 
 
 ## Python Requirements
