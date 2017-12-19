@@ -32,10 +32,15 @@ pip install -r requirements.txt
 
 To run the current version of the algorithm, you can run the following command:
 ```
-python src/driver.py data/cullpdb+profile_6133.npy [-c]
+python src/driver.py data/cullpdb+profile_6133.npy 
 ```
 where the last argument is the location of the dataset. We use the publicly 
 available dataset from Zhou, J. & Troyanskaya O. 2014. Currently, this data
 is accessible here: <http://www.princeton.edu/~jzthree/datasets/ICML2014/>
-Use the [-c] to see the 8x8 confusion matrix of the labels on the validation
-data after each epoch of training.
+
+Add the [-c] flag to see the 8x8 confusion matrix of the labels on the validation
+data after each epoch of training. For more information about using the driver 
+script, run the driver with the help flag:
+```
+python src/driver.py -h
+```
